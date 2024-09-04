@@ -1,3 +1,26 @@
+import socket
+
+server_ip = "10.17.38.137"
+server_port = 5000
+
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server_socket.bind((server_ip, server_port))
+
+print(f"Server UDP berjalan di IP {server_ip} dan port {server_port}. Menunggu data...")
+
+while True:
+    try:
+        data, client_address = server_socket.recvfrom(1024)
+        print(f"Data diterima dari {client_address}: {data.decode('utf-8')}")
+    except KeyboardInterrupt:
+        print("\nServer dihentikan.")
+        break
+    except Exception as e:
+        print(f"Error: {e}")
+        break
+
+server_socket.close()
+
 # import socket
 
 # # Tentukan alamat IP dan port yang digunakan oleh server
@@ -56,25 +79,3 @@
 # client_socket.close()
 # server_socket.close()
 
-import socket
-
-server_ip = "10.17.38.137"
-server_port = 5000
-
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-server_socket.bind((server_ip, server_port))
-
-print(f"Server UDP berjalan di IP {server_ip} dan port {server_port}. Menunggu data...")
-
-while True:
-    try:
-        data, client_address = server_socket.recvfrom(1024)
-        print(f"Data diterima dari {client_address}: {data.decode('utf-8')}")
-    except KeyboardInterrupt:
-        print("\nServer dihentikan.")
-        break
-    except Exception as e:
-        print(f"Error: {e}")
-        break
-
-server_socket.close()
