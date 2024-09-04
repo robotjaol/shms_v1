@@ -1,1 +1,97 @@
-<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36" version="24.7.10">
+  <diagram id="vD8sFqU6dK69UjMSyr5a" name="Page-1">
+    <mxGraphModel dx="1193" dy="766" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="LxN4yWKv5p5tdIrmG8J--1" value="JETSON" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="520" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="RJCEHbTl5Gyyu48FaCsY-4" target="LxN4yWKv5p5tdIrmG8J--1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-4" value="" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="60" y="287" width="280" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-1" value="ESP32" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="70" y="317" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-2" value="MPU6050" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="70" y="397" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-3" value="DHT Sensor" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="210" y="397" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-22" value="BATERAI" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="210" y="317" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-42" value="LOCAL - A" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="175" y="287" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="RJCEHbTl5Gyyu48FaCsY-24" target="LxN4yWKv5p5tdIrmG8J--1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-24" value="" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="530" y="287" width="280" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-43" value="LOCAL - B" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="640" y="287" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-25" value="ESP32" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="540" y="317" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-26" value="MPU6050" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="540" y="397" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-27" value="DHT Sensor" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="680" y="397" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-28" value="BATERAI" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="680" y="317" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="RJCEHbTl5Gyyu48FaCsY-30" target="LxN4yWKv5p5tdIrmG8J--1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-30" value="" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="52" y="640" width="280" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-44" value="LOCAL - C" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="167" y="640" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-31" value="ESP32" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="62" y="670" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-32" value="MPU6050" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="62" y="750" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-33" value="DHT Sensor" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="202" y="750" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-34" value="BATERAI" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="202" y="670" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="RJCEHbTl5Gyyu48FaCsY-36" target="LxN4yWKv5p5tdIrmG8J--1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-36" value="" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="530" y="640" width="280" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-45" value="LOCAL - D" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="640" y="644" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-37" value="ESP32" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="540" y="670" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-38" value="MPU6050" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="540" y="750" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-39" value="DHT Sensor" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="680" y="750" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="RJCEHbTl5Gyyu48FaCsY-40" value="BATERAI" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="680" y="670" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

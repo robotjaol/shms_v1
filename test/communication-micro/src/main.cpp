@@ -1,18 +1,153 @@
-#include <Arduino.h>
+// #include <WiFi.h>
+// #include <WiFiUdp.h>
 
-// put function declarations here:
-int myFunction(int, int);
+// const char* ssid = "ITS-WIFI-NGELAG";  // SSID WiFi
+// const char* password = "jonaits2022";  // Password WiFi
+// const char* server_ip = "192.168.146.100";  // ip wifi laptop
+// const uint16_t server_port = 5000;
+
+// WiFiUDP udp;
+
+// void setup() {
+//   Serial.begin(115200);  
+//   WiFi.begin(ssid, password);  
+
+//   int attempt = 0;
+//   while (WiFi.status() != WL_CONNECTED) {
+//     delay(1000);
+//     Serial.print("Menghubungkan ke WiFi");
+//     Serial.print(" (Percobaan ");
+//     Serial.print(++attempt);
+//     Serial.println(")");
+  
+//     if (attempt > 20) { 
+//       Serial.println("Gagal Terhubung");
+//       return;  
+//     }
+//   }
+
+//   Serial.println("Terhubung ke WiFi!");
+//   Serial.print("IP Address ESP32: ");
+//   Serial.println(WiFi.localIP());  
+// }
+
+// void loop() {
+//   if (WiFi.status() == WL_CONNECTED) {  
+//     udp.beginPacket(server_ip, server_port);  // RUN UDP
+//     udp.print("Hello from ESP32!");  // 
+//     udp.endPacket();  
+    
+//     Serial.println("Send ; Jon");
+//   } else {
+//     Serial.println("WiFi pedot");
+//     WiFi.reconnect();  
+//   }
+
+//   delay(1000);  // Tunggu 1 detik sebelum mengirim data lagi
+// }
+
+
+// #include <WiFi.h>
+
+// // const char* ssid = "ITS-WIFI-NGELAG";  // SSID WiFi
+// // const char* password = "jonaits2022";  // Password WiFi
+// // const char* server_ip = "192.168.146.100";  // IP Address laptop
+// // const uint16_t server_port = 5000;  // Port server
+
+// const char* ssid = "DTEO-VOKASI";  // SSID WiFi
+// const char* password = "TEO123456";  // Password WiFi
+// const char* server_ip = "10.17.38.137";  // IP Address laptop
+// const uint16_t server_port = 5000;  // Port server
+// WiFiClient client;  // Deklarasi client TCP
+
+// void setup() {
+//   Serial.begin(115200);  // Inisialisasi komunikasi serial
+//   WiFi.begin(ssid, password);  // Hubungkan ke WiFi
+
+//   int attempt = 0;
+//   while (WiFi.status() != WL_CONNECTED) {
+//     delay(1000);
+//     Serial.print("Menghubungkan ke WiFi");
+//     Serial.print(" (Percobaan ");
+//     Serial.print(++attempt);
+//     Serial.println(")");
+    
+//     if (attempt > 20) { 
+//       Serial.println("Gagal terhubung ke WiFi. Periksa kredensial atau jaringan.");
+//       return;  
+//     }
+//   }
+
+//   Serial.println("Terhubung ke WiFi!");
+//   Serial.print("IP Address ESP32: ");
+//   Serial.println(WiFi.localIP());  // Cetak IP address ESP32
+
+//   // Coba koneksi ke server
+//   if (client.connect(server_ip, server_port)) {
+//     Serial.println("Terhubung ke server TCP!");
+//   } else {
+//     Serial.println("Gagal terhubung ke server.");
+//   }
+// }
+
+// void loop() {
+//   if (client.connected()) {  // Periksa apakah client masih terhubung ke server
+//     client.println("Hello from ESP32!");  // Kirim pesan ke server
+//     Serial.println("Mengirim data: Hello from ESP32!");  // Cetak pesan yang dikirim
+//   } else {
+//     Serial.println("Koneksi terputus. Mencoba menghubungkan kembali...");
+//     if (client.connect(server_ip, server_port)) {
+//       Serial.println("Kembali terhubung ke server TCP!");
+//     }
+//   }
+
+//   delay(1000);  // Tunggu 1 detik sebelum mengirim data lagi
+// }
+
+
+#include <WiFi.h>
+#include <WiFiUdp.h>
+
+const char* ssid = "DTEO-VOKASI";
+const char* password = "TEO123456";
+const char* server_ip = "10.17.38.137";
+const uint16_t server_port = 5000;
+
+WiFiUDP udp;
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+
+  int attempt = 0;
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print("Menghubungkan ke WiFi");
+    Serial.print(" (Percobaan ");
+    Serial.print(++attempt);
+    Serial.println(")");
+    
+    if (attempt > 20) { 
+      Serial.println("Gagal terhubung ke WiFi. Periksa kredensial atau jaringan.");
+      return;  
+    }
+  }
+
+  Serial.println("Terhubung ke WiFi!");
+  Serial.print("IP Address ESP32: ");
+  Serial.println(WiFi.localIP());
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
+  if (WiFi.status() == WL_CONNECTED) {
+    udp.beginPacket(server_ip, server_port);
+    udp.print("Jonathan Ganteng!");
+    udp.endPacket();
+    Serial.println("Mengirim data: Jonathan Ganteng!");
+  } else {
+    Serial.println("WiFi terputus. Mencoba menghubungkan kembali...");
+    WiFi.reconnect();
+  }
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  delay(1000);
 }
