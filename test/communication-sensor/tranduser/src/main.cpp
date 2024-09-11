@@ -12,7 +12,7 @@
 DHT dht(DHTPIN, DHTTYPE);
 Adafruit_MPU6050 mpu;
 
-// SET VARIABLE SENSE
+// SET VARIABLE SENSOR
 float humidity, temperature;
 float accelX, accelY, accelZ;
 float gyroX, gyroY, gyroZ;
