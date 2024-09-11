@@ -1,119 +1,128 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
-#include <ESP8266WebServer.h>
 #include <Wire.h>
 #include <Adafruit_BusIO_Register.h>
 
-// Pengaturan WiFi
-const char *ssid = "DTEO-VOKASI";   // Ganti dengan SSID WiFi Anda
-const char *password = "TEO123456"; // Ganti dengan Password WiFi Anda
+const char *ssid = "DTEO-VOKASI";   // SSD WIFI SET
+const char *password = "TEO123456"; // PASSWORD WIFI
 
-const char *server_url = "http://10.17.39.211/server_data.php"; // Endpoint PHP yang benar
+float humidity, temperature;
+float accelX, accelY, accelZ;
+float gyroX, gyroY, gyroZ;
 
-WiFiClient client; // Membuat objek WiFiClient
-
-void setup()
+void connectToWifi()
 {
-    Serial.begin(9600); // Serial ESP8266 untuk menerima data dari Arduino Mega
-    Serial.println("ESP8266 siap menerima data");
+    WiFi.mode(WIFI_OFF); // Prevents reconnection issue
+    delay(1000);
+    WiFi.mode(WIFI_STA); // Connect ESP as station
 
-    // Menghubungkan ke WiFi
-    WiFi.begin(ssid, password);
-    Serial.print("Menghubungkan ke WiFi");
+    WiFi.begin(ssid, password); // Connect to WiFi
+    Serial.println("");
+
+    Serial.print("Connecting");
     while (WiFi.status() != WL_CONNECTED)
     {
         delay(500);
         Serial.print(".");
     }
-    Serial.println();
-    Serial.println("WiFi terhubung");
-    Serial.print("IP Address: ");
+
+    Serial.println("");
+    Serial.print("Connected to ");
+    Serial.println(ssid);
+    Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
+    Serial.println("Connect To Wifi Function Already start"); // Debug running Code
 }
 
-// Fungsi untuk parsing suhu dari string data
-float parseTemperature(String data)
-{
-    int tempIndex = data.indexOf("Temp: ") + 6;
-    int tempEnd = data.indexOf(" C", tempIndex);
-    if (tempIndex >= 6 && tempEnd > tempIndex) // Validasi indeks
-    {
-        return data.substring(tempIndex, tempEnd).toFloat();
-    }
-    return NAN; // Mengembalikan NaN jika parsing gagal
+void setup()
+{   
+    Serial.println("Setup Function START");
+    Serial.begin(115200);
+    connectToWifi();
 }
 
-// Fungsi untuk parsing kelembaban dari string data
-float parseHumidity(String data)
+void kirimDataKeServer()
+{   
+    Serial.println("Kirim Data Ke Server START");
+    WiFiClient client; // Declare WiFiClient
+    HTTPClient http;   // Declare objek HTTPClient
+    String postData;
+
+    postData = "kelembaban=";
+    postData += humidity;
+    postData += "&suhu=";
+    postData += temperature;
+    postData += "&accelX=";
+    postData += accelX;
+    postData += "&accelY=";
+    postData += accelY;
+    postData += "&accelZ=";
+    postData += accelZ;
+    postData += "&gyroX=";
+    postData += gyroX;
+    postData += "&gyroY=";
+    postData += gyroY;
+    postData += "&gyroZ=";
+    postData += gyroZ;
+
+    // CUSTOM IP dan path server
+    http.begin(client, "http://10.17.39.110/API/server.php");
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    // Req Server
+    int httpCode = http.POST(postData); // req by post mas
+    String payload = http.getString();  // get respon server
+
+    // Cek Respon server
+    Serial.println(httpCode); //  HTTP return code
+    Serial.println(payload);  //  request response payload
+    http.end();
+}
+
+String splitString(String data, char separator, int index)
 {
-    int humIndex = data.indexOf("Humidity: ") + 10;
-    int humEnd = data.indexOf(" %", humIndex);
-    if (humIndex >= 10 && humEnd > humIndex) // Validasi indeks
+    int found = 0;
+    int strIndex[] = {0, -1};
+    int maxIndex = data.length() - 1;
+
+    for (int i = 0; i <= maxIndex && found <= index; i++)
     {
-        return data.substring(humIndex, humEnd).toFloat();
+        if (data.charAt(i) == separator || i == maxIndex)
+        {
+            found++;
+            strIndex[0] = strIndex[1] + 1;
+            strIndex[1] = (i == maxIndex) ? i + 1 : i;
+        }
     }
-    return NAN; // Mengembalikan NaN jika parsing gagal
+    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
 void loop()
 {
+    Serial.println("Loop Function Already Start");
     if (Serial.available())
     {
-        String data = Serial.readStringUntil('\n'); // Baca data yang dikirimkan dari Arduino Mega
-        Serial.print("Data dari Arduino Mega: ");
-        Serial.println(data); // Tampilkan data di Serial Monitor ESP8266
-
-        // Contoh format data: "Temp: 25.6 C, Humidity: 60.5%"
-        // Pastikan data sesuai format ini, jika tidak, parsing akan gagal.
-
-        if (data.startsWith("Temp: ") && data.indexOf("Humidity: ") != -1) // Validasi format data
+        Serial.println("Data received");
+        String msg = "";
+        while (Serial.available())
         {
-            float temperature = parseTemperature(data); // Memanggil fungsi parsing
-            float humidity = parseHumidity(data);       // Memanggil fungsi parsing
-
-            // Mengirim data ke server menggunakan HTTP POST jika nilai valid
-            if (!isnan(temperature) && !isnan(humidity) && WiFi.status() == WL_CONNECTED)
-            {
-                HTTPClient http;
-
-                // Membuka koneksi ke server dengan WiFiClient
-                http.begin(client, server_url); // Menggunakan URL PHP
-
-                // Menyiapkan HTTP POST
-                http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-                String httpRequestData = "suhu=" + String(temperature, 1) + "&kelembaban=" + String(humidity, 1); // Mengirim dengan format presisi yang benar
-
-                // Mengirim data ke server
-                int httpResponseCode = http.POST(httpRequestData);
-
-                // Mengecek respon dari server
-                if (httpResponseCode > 0)
-                {
-                    String response = http.getString();
-                    Serial.print("Response dari server: ");
-                    Serial.println(response);
-                }
-                else
-                {
-                    Serial.print("Error pada pengiriman: ");
-                    Serial.println(httpResponseCode);
-                }
-
-                // Menutup koneksi
-                http.end();
-            }
-            else
-            {
-                Serial.println("Error: Nilai suhu atau kelembaban tidak valid.");
-            }
-        }
-        else
-        {
-            Serial.println("Error: Format data tidak sesuai.");
+            msg += char(Serial.read());
+            delay(50);
         }
 
-        delay(5000); // Tunggu 5 detik sebelum loop berikutnya
+        // separate value using ";"
+        humidity = splitString(msg, ';', 0).toFloat();
+        temperature = splitString(msg, ';', 1).toFloat();
+        accelX = splitString(msg, ';', 2).toFloat();
+        accelY = splitString(msg, ';', 3).toFloat();
+        accelZ = splitString(msg, ';', 4).toFloat();
+        gyroX = splitString(msg, ';', 5).toFloat();
+        gyroY = splitString(msg, ';', 6).toFloat();
+        gyroZ = splitString(msg, ';', 7).toFloat();
+
+        // Send data to the server
+        kirimDataKeServer();
     }
 }
 
@@ -291,7 +300,7 @@ void loop()
 // const char* password = "TEO123456";  // Password WiFi
 // const char* server_ip = "10.17.38.137";  // IP Address laptop
 // const uint16_t server_port = 5000;  // Port server
-// WiFiClient client;  // Deklarasi client TCP
+// WiFiClient client;  // Declare client TCP
 
 // void setup() {
 //   Serial.begin(115200);  // Inisialisasi komunikasi serial
