@@ -32,7 +32,7 @@ void connectToWifi()
     Serial.println(ssid);
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
-    Serial.println("Connect To Wifi Function Already start"); // Debug running Code
+    Serial.println("Connect To Wifi Done"); // Debug running Code
 }
 
 void setup()
