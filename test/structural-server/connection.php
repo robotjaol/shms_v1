@@ -1,14 +1,16 @@
-//connection
 <?php
-// Declare the variables
+    // Declare the variables
 $servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "structural_health_db";
+$username   = "root";
+$password   = "";
+$dbname     = "shms";
 
+    // Create a new mysqli instance
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-if ($conn->connect_errno) {
-  die("Failed to connect to MySQL: " . $conn->connect_error);
+    // Check the connection
+if ($conn->connect_error) {
+    die("Failed to connect to MySQL: " . $conn->connect_error);
 }
+
 ?>

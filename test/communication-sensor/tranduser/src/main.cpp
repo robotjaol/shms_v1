@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <Adafruit_MPU6050.h>
-#include <Adafruit_SSD1306.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
@@ -12,6 +11,9 @@
 DHT dht(DHTPIN, DHTTYPE);
 Adafruit_MPU6050 mpu;
 
+// LCD CONFIGURATION
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Alamat I2C 0x27, 16 kolom x 2 baris
+
 // SET VARIABLE SENSOR
 float humidity, temperature;
 float accelX, accelY, accelZ;
@@ -19,39 +21,48 @@ float gyroX, gyroY, gyroZ;
 
 String kirim = "";
 
-void setup(){
+void setup()
+{
   Serial.begin(9600);
-  Serial3.begin(115200);  // Baudrate Serial ESP8266
-  
+  Serial3.begin(115200); // Baudrate Serial ESP8266
+
   dht.begin();
-  
-  // Initialize MPU6050
-  if (!mpu.begin()) {
+
+  // LCD Initialization
+  lcd.begin(16,2);     // Inisialisasi LCD
+  lcd.backlight(); // Aktifkan lampu latar LCD
+  lcd.clear();     // Bersihkan tampilan LCD
+
+  // looping mpu6050 update
+  if (!mpu.begin())
+  {
     Serial.println("Failed to find MPU6050 chip");
-    while (1) {
+    while (1)
+    {
       delay(10);
     }
   }
-  
+
   Serial.println("MPU6050 Found!");
   mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
   mpu.setGyroRange(MPU6050_RANGE_500_DEG);
   mpu.setFilterBandwidth(MPU6050_BAND_5_HZ);
-  
+
   delay(100);
 }
 
-void loop(){
+void loop()
+{
   // DHT read
   humidity = dht.readHumidity();
   temperature = dht.readTemperature();
 
-  // DHT
+  // Print DHT data to Serial Monitor
   Serial.print("Humidity: ");
   Serial.print(humidity);
   Serial.print(", Temperature: ");
   Serial.println(temperature);
-  
+
   // MPU6050
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
@@ -62,15 +73,38 @@ void loop(){
   gyroX = g.gyro.x;
   gyroY = g.gyro.y;
   gyroZ = g.gyro.z;
-  
+
+  // Print MPU6050 data to Serial Monitor
+  Serial.print("Accel X: ");
+  Serial.print(accelX, 2);
+  Serial.print(", Y: ");
+  Serial.print(accelY, 2);
+  Serial.print(", Z: ");
+  Serial.println(accelZ, 2);
+
+  Serial.print("Gyro X: ");
+  Serial.print(gyroX, 2);
+  Serial.print(", Y: ");
+  Serial.print(gyroY, 2);
+  Serial.print(", Z: ");
+  Serial.println(gyroZ, 2);
+
   // LCD DISPLAY
-  Serial.print("Accel X: "); Serial.print(accelX); 
-  Serial.print(", Y: "); Serial.print(accelY); 
-  Serial.print(", Z: "); Serial.println(accelZ);
-  Serial.print("Gyro X: "); Serial.print(gyroX); 
-  Serial.print(", Y: "); Serial.print(gyroY); 
-  Serial.print(", Z: "); Serial.println(gyroZ);
-  
+  lcd.setCursor(0, 0); // Set cursor to column 0, row 0
+  lcd.print("T:");
+  lcd.print(temperature);
+  lcd.print("C H:");
+  lcd.print(humidity);
+  lcd.print("%");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Acc X:");
+  lcd.print(accelX, 1);
+  lcd.print(" Y:");
+  lcd.print(accelY, 1);
+  lcd.print(" Z:");
+  lcd.print(accelZ, 1);
+
   // Serial3 Send
   kirim = "";
   kirim += humidity;
@@ -91,14 +125,16 @@ void loop(){
 
   Serial3.println(kirim);
 
-  if(Serial3.available()){
+  if (Serial3.available())
+  {
     String msg = "";
-    while(Serial3.available()){
+    while (Serial3.available())
+    {
       msg += char(Serial3.read());
       delay(50);
     }
     Serial.println(msg);
   }
 
-  delay(500);  // TRANSMIT DELAY
+  delay(500); // TRANSMIT DELAY
 }

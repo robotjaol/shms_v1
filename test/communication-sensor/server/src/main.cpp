@@ -21,37 +21,45 @@ void connectToWifi()
     Serial.println("");
 
     Serial.print("Connecting");
-    while (WiFi.status() != WL_CONNECTED)
+    unsigned long startTime = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - startTime < 10000) // Timeout 10 detik jika tidak connect wifi
     {
         delay(500);
         Serial.print(".");
     }
 
-    Serial.println("");
-    Serial.print("Connected to ");
-    Serial.println(ssid);
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
-    Serial.println("Connect To Wifi function Done"); // Debug running Code
+    if (WiFi.status() == WL_CONNECTED)
+    {
+        Serial.println("");
+        Serial.print("Connected to ");
+        Serial.println(ssid);
+        Serial.print("IP address: ");
+        Serial.println(WiFi.localIP());
+        Serial.println("Connect To Wifi function Done");
+    }
+    else
+    {
+        Serial.println("Failed to connect to WiFi");
+    }
 }
 
 void setup()
-{   
-    Serial.println("Setup Function START");
+{
     Serial.begin(115200);
+    Serial.println("Setup Function START");
     connectToWifi();
 }
 
 void kirimDataKeServer()
-{   
-    Serial.println("Kirim Data Ke Server START");
+{
+    // Serial.println("Kirim Data Ke Server START");
     WiFiClient client; // Declare WiFiClient
     HTTPClient http;   // Declare objek HTTPClient
     String postData;
 
-    postData = "kelembaban=";
+    postData = "humidity=";
     postData += humidity;
-    postData += "&suhu=";
+    postData += "&temperature=";
     postData += temperature;
     postData += "&accelX=";
     postData += accelX;
@@ -67,7 +75,7 @@ void kirimDataKeServer()
     postData += gyroZ;
 
     // CUSTOM IP dan path server
-    http.begin(client, "http://10.17.39.110/API/server.php");
+    http.begin(client, "http://10.17.38.184/structural-server/server.php");
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
     // Req Server
@@ -100,18 +108,28 @@ String splitString(String data, char separator, int index)
 
 void loop()
 {
-    Serial.println("Loop Function Already Start");
     if (Serial.available())
     {
         Serial.println("Data received");
         String msg = "";
         while (Serial.available())
         {
-            msg += char(Serial.read());
-            delay(50);
+            char receivedChar = char(Serial.read());
+            msg += receivedChar;
+
+            // Debugging last data update
+            if (receivedChar == '\n')
+            {
+                break;
+            }
+            delay(10); // buffer delay
         }
 
-        // separate value using ";"
+        // Cetak ulang data
+        // Serial.println("Data from ATmega:");
+        Serial.println(msg);
+
+        // Konversi data
         humidity = splitString(msg, ';', 0).toFloat();
         temperature = splitString(msg, ';', 1).toFloat();
         accelX = splitString(msg, ';', 2).toFloat();
@@ -121,7 +139,7 @@ void loop()
         gyroY = splitString(msg, ';', 6).toFloat();
         gyroZ = splitString(msg, ';', 7).toFloat();
 
-        // Send data to the server
+        // Kirim data ke server
         kirimDataKeServer();
     }
 }
