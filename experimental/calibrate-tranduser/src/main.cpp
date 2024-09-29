@@ -1,136 +1,118 @@
-// #include <Arduino.h>
-// #include <Wire.h>
-// #include <Adafruit_MPU6050.h>
-// #include <Adafruit_Sensor.h>
-// #include <LiquidCrystal_I2C.h>
-// #include <DHT.h>
-// #include <DHT_U.h>
-// #include <WiFi.h>
-// #include <WiFiUdp.h>
-
-// #define DHTPIN 4
-// #define DHTTYPE DHT22
-
-// LiquidCrystal_I2C lcd(0x27, 16, 2);
-// Adafruit_MPU6050 mpu;
-// DHT dht(DHTPIN, DHTTYPE);
-
-// void setup()
-// {
-
-//   Serial.begin(115200);
-//   lcd.init();
-//   lcd.backlight();
-
-//   lcd.setCursor(0, 0);
-//   lcd.print("Initializing...");
-
-//   if (!mpu.begin())
-//   {
-//     Serial.println("Failed to initialize MPU6050");
-//     lcd.setCursor(0, 0);
-//     lcd.print("MPU6050 Failed");
-//     while (1)
-//       ;
-//   }
-//   Serial.println("MPU6050 initialized");
-
-//   dht.begin();
-//   if (dht.readTemperature() == NAN || dht.readHumidity() == NAN)
-//   {
-//     Serial.println("Failed to initialize DHT");
-//     lcd.setCursor(0, 1);
-//     lcd.print("DHT Failed");
-//     while (1)
-//       ;
-//   }
-//   Serial.println("DHT initialized");
-// }
-
-// void loop()
-// {
-
-//   sensors_event_t a, g, temp;
-//   mpu.getEvent(&a, &g, &temp);
-
-//   float temperature = dht.readTemperature();
-//   float humidity = dht.readHumidity();
-
-//   if (isnan(temperature) || isnan(humidity))
-//   {
-//     Serial.println("Failed to read DHT22");
-//     lcd.setCursor(0, 0);
-//     lcd.print("DHT Failed");
-//   }
-//   else
-//   {
-//     lcd.setCursor(0, 0);
-//     lcd.print("Ax:");
-//     lcd.print(a.acceleration.x);
-//     lcd.setCursor(8, 0);
-//     lcd.print("Ay:");
-//     lcd.print(a.acceleration.y);
-
-//     lcd.setCursor(0, 1);
-//     lcd.print("T:");
-//     lcd.print(temperature);
-//     lcd.print("C H:");
-//     lcd.print(humidity);
-//     lcd.print("%");
-//   }
-//   delay(1000);
-// }
-
-#include <Adafruit_MPU6050.h>
-#include <Adafruit_Sensor.h>
-#include <DHT.h>
-#include <DHT_U.h>
-#include <WiFi.h>
-#include <WiFiUdp.h>
-#include <Adafruit_SSD1306.h>
 #include <Wire.h>
+#include <Arduino.h>
+#include <HX711.h>
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_ADXL345_U.h>
+#include <Adafruit_Sensor.h>
 
-#define DHTPIN 5
-#define DHTTYPE DHT22
+#define D7S_ADDRESS 0x55
+#define LOADCELL_DOUT_PIN 3
+#define LOADCELL_SCK_PIN 2
 
+HX711 scale;
 Adafruit_MPU6050 mpu;
-DHT dht(DHTPIN, DHTTYPE);
-Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire);
+Adafruit_ADXL345_Unified adxl = Adafruit_ADXL345_Unified();
+
+float calibration_factor = -7050;
 
 void setup()
 {
   Serial.begin(115200);
-  Serial.println("Adafruit_S SD1306, MPU6050, DHT22, Display Initialization");
   Wire.begin();
+
+  scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
+  scale.set_scale(calibration_factor);
+  scale.tare();
 
   if (!mpu.begin())
   {
-    Serial.println("Could not find a valid MPU6050 sensor, check wiring!");
+    Serial.println("Failed to find MPU6050 chip");
     while (1)
-      ;
-  }
-  else
-  {
-    Serial.println("MPU6050 initialized successfully!");
+    {
+      delay(10);
+    }
   }
 
-  dht.begin();
-  Serial.println("DHT22 sensor initialized.");
+  if (!adxl.begin())
+  {
+    Serial.println("Failed to find ADXL345 chip");
+    while (1)
+    {
+      delay(10);
+    }
+  }
 
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C))
+  Serial.println("Connecting...");
+  delay(1000);
+}
+
+float readAcceleration()
+{
+  int16_t xAccel = 0, yAccel = 0, zAccel = 0;
+
+  Wire.beginTransmission(D7S_ADDRESS);
+  Wire.write(0x20);
+  Wire.endTransmission();
+  Wire.requestFrom(D7S_ADDRESS, 6);
+
+  if (Wire.available() == 6)
   {
-    Serial.println("SSD1306 allocation failed");
-    for (;;)
-      ;
+    xAccel = Wire.read() | (Wire.read() << 8);
+    yAccel = Wire.read() | (Wire.read() << 8);
+    zAccel = Wire.read() | (Wire.read() << 8);
   }
-  else
-  {
-    Serial.println("SSD1306 initialized successfully!");
-  }
-  display.clearDisplay();
-  display.display();
+
+  float x = xAccel * 0.001;
+  float y = yAccel * 0.001;
+  float z = zAccel * 0.001;
+
+  return sqrt(x * x + y * y + z * z);
+}
+
+void printWeight()
+{
+  long weight = scale.get_units(10);
+  Serial.print("Weight: ");
+  Serial.print(weight);
+  Serial.println(" g");
+}
+
+void printMPU6050()
+{
+  sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+
+  Serial.print("MPU6050 Acceleration - X: ");
+  Serial.print(a.acceleration.x);
+  Serial.print(" Y: ");
+  Serial.print(a.acceleration.y);
+  Serial.print(" Z: ");
+  Serial.println(a.acceleration.z);
+}
+
+void printADXL345()
+{
+  sensors_event_t event;
+  adxl.getEvent(&event);
+
+  Serial.print("ADXL345 Acceleration - X: ");
+  Serial.print(event.acceleration.x);
+  Serial.print(" Y: ");
+  Serial.print(event.acceleration.y);
+  Serial.print(" Z: ");
+  Serial.println(event.acceleration.z);
 }
 
 void loop()
 {
+  float acceleration = readAcceleration();
+  Serial.print("Earthquake: ");
+  Serial.print(acceleration);
+  Serial.print(" m/s², ");
+
+  printWeight();
+  printMPU6050();
+  printADXL345();
+
+  delay(200);
 }
