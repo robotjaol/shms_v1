@@ -202,12 +202,12 @@ void loop()
   int adcValue = analogRead(adcPin);
   batteryVoltage = (adcValue / 4095.0) * 8.4; // 8.4V
 
-  // Menghitung persentase baterai (1 - 100%)
+  // persentase baterai (1 - 100%)
   batteryPercentage = map(batteryVoltage * 100, 6.4 * 100, 8.4 * 100, 0, 100); // Persentase baterai
   if (batteryPercentage < 0)
-    batteryPercentage = 0; // Batasi nilai minimum 0%
+    batteryPercentage = 0; // Limit Minimum as variable
   if (batteryPercentage > 100)
-    batteryPercentage = 100; // Batasi nilai maksimum 100%
+    batteryPercentage = 100; // limit maximum as variable
 
   lcd.setCursor(0, 1);
   lcd.print("Bat: ");
